@@ -21,5 +21,13 @@ namespace RestaurantMVC.Controllers
             accountService.RegisterUser(dto);
             return Ok();
         }
+
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] LoginDto dto)
+        {
+            string token = accountService.GenerateJwt(dto);
+            //accountService.(dto);
+            return Ok(token);
+        }
     }
 }

@@ -11,11 +11,11 @@ namespace RestaurantMVC.Controllers
 {
     public class UserController : Controller
     {
-        private readonly IUserService userService;
+        private readonly IAccountService accountService;
 
-        public UserController(IUserService userService)
+        public UserController(IAccountService accountService)
         {
-            this.userService = userService;
+            this.accountService = accountService;
         }
 
         public IActionResult Index()
@@ -28,14 +28,14 @@ namespace RestaurantMVC.Controllers
         {
             return View();
         }
-        public async Task<IActionResult> Register([FromForm] RegistrationDto registrationDto)
+        public IActionResult Register([FromForm] RegistrationDto registrationDto)
         {
             if(!ModelState.IsValid)
                 return View(registrationDto);
 
             try
             {
-                await userService.RegisterUser(this, registrationDto);
+                accountService.RegisterUser(registrationDto);
             }
             catch
             {
@@ -59,6 +59,10 @@ namespace RestaurantMVC.Controllers
                 return Ok();
             }
               */
+            string key = accountService.GenerateJwt(loginDto);
+
+            Response.Headers.Add("Authorization", key);
+
             return View();
         }
 
