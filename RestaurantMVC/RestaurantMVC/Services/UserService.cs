@@ -47,7 +47,5 @@ namespace RestaurantMVC.Services
                 dbContextTransaction.Commit();
             }
         }
-
-        
     }
 }
