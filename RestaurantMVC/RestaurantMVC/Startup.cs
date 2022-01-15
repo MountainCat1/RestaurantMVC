@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RestaurantMVC.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +26,12 @@ namespace RestaurantMVC
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddSwaggerGen();
+
+            services.AddDbContext<RestaurantDbContext>(
+                options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionString"))
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -32,6 +40,9 @@ namespace RestaurantMVC
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
             else
             {
@@ -43,6 +54,12 @@ namespace RestaurantMVC
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                options.RoutePrefix = "https://localhost:5001/swagger";
+            });
 
             app.UseAuthorization();
 
