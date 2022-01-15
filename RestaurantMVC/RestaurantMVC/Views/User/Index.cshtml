@@ -4,46 +4,13 @@
 @{
 }
 
-@model RegistrationDto
+@model UserDto;
 
-@using (Html.BeginForm("RegisterUser", "User"))
+@if (Model == null)
 {
-    <div class="editor-label">
-        @Html.LabelFor(m => m.Username)
-    </div>
-    <div class="editor-field">
-        @Html.TextBoxFor(m => m.Username)
-        @Html.ValidationMessageFor(m => m.Username)
-    </div>
-
-    <div class="editor-label">
-        @Html.LabelFor(m => m.Email)
-    </div>
-    <div class="editor-field">
-        @Html.TextBoxFor(m => m.Email)
-        @Html.ValidationMessageFor(m => m.Email)
-    </div>
-
-    <div class="editor-label">
-        @Html.LabelFor(m => m.Password)
-    </div>
-    <div class="editor-field">
-        @Html.TextBoxFor(m => m.Password)
-        @Html.ValidationMessageFor(m => m.Password)
-    </div>
-
-    <div class="editor-label">
-        @Html.LabelFor(m => m.ConfirmPassword)
-    </div>
-    <div class="editor-field">
-        @Html.TextBoxFor(m => m.ConfirmPassword)
-        @Html.ValidationMessageFor(m => m.ConfirmPassword)
-    </div>
-
-
-    <p>
-        <input type="submit" value="Register" />
-    </p>
+    <h1>NO USER</h1>
 }
-
-<script src="~/lib~/lib/jquery"></script>
+else
+{
+    <h1>@Model.Username</h1>
+}

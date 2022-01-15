@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RestaurantMVC.Data;
+using RestaurantMVC.Entities;
+using RestaurantMVC.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,16 +29,21 @@ namespace RestaurantMVC
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddRazorPages();
 
             services.AddSwaggerGen();
-
+            services.AddAutoMapper(typeof(Program).Assembly);
             services.AddDbContext<RestaurantDbContext>(
                 options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionString"))
             );
+
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
+            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RestaurantDbContext dbContext)
         {
             if (env.IsDevelopment())
             {
@@ -43,6 +51,8 @@ namespace RestaurantMVC
 
                 app.UseSwagger();
                 app.UseSwaggerUI();
+
+                new DatabaseSeeder(dbContext).Seed();
             }
             else
             {
@@ -61,6 +71,7 @@ namespace RestaurantMVC
                 options.RoutePrefix = "https://localhost:5001/swagger";
             });
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -68,6 +79,7 @@ namespace RestaurantMVC
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }

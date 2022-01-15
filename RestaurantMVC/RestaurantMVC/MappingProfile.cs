@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using RestaurantMVC.Entities;
+using RestaurantMVC.Models;
 
 namespace RestaurantMVC
 {
@@ -6,7 +8,8 @@ namespace RestaurantMVC
     {
         public MappingProfile()
         {
-            
+            CreateMap<RegistrationDto, User>();
+            CreateMap<User, UserDto>();
         }
     }
 }
