@@ -35,6 +35,27 @@ namespace RestaurantMVC.Services
             this.accountService = accountService;
         }
 
+        public async Task Create(ProductDto dto, ClaimsPrincipal claims)
+        {
+            using (var transaction = await context.Database.BeginTransactionAsync())
+            {
+                if (!AuthorizeAdmin(claims))
+                {
+                    throw new ForbidException("");
+                }
+
+                Product entity = mapper.Map<Product>(dto);
+
+                User user = accountService.GetUser(claims);
+
+                await context.Products.AddAsync(entity);
+
+
+                await context.SaveChangesAsync();
+                transaction.Commit();
+            }
+        }
+
         public async Task Delete(int id, ClaimsPrincipal claims)
         {
             using (var transaction = await context.Database.BeginTransactionAsync())
@@ -44,7 +65,7 @@ namespace RestaurantMVC.Services
                 if (product == null)
                     throw new NotFoundException("");
 
-                if (!Authorize(product, claims))
+                if (!AuthorizeAdmin(claims))
                 {
                     throw new ForbidException("");
                 }
@@ -62,7 +83,7 @@ namespace RestaurantMVC.Services
             {
                 Product entity = mapper.Map<Product>(dto);
 
-                if (!Authorize(entity, claims)) {
+                if (!AuthorizeAdmin(claims)) {
                     throw new ForbidException("");
                 }
 
@@ -92,27 +113,14 @@ namespace RestaurantMVC.Services
             return dto;
         }
 
-        public bool Authorize(Product product, ClaimsPrincipal claims)
+        public bool AuthorizeAdmin(ClaimsPrincipal claims)
         {
             User user = accountService.GetUser(claims);
 
+            if (user == null)
+                return false;
+
             return user.RoleId == 1;
-        }
-
-        public async Task Create(ProductDto dto, ClaimsPrincipal claims)
-        {
-            using (var transaction = await context.Database.BeginTransactionAsync())
-            {
-                Product entity = mapper.Map<Product>(dto);
-
-                User user = accountService.GetUser(claims);
-
-                await context.Products.AddAsync(entity);
-
-
-                await context.SaveChangesAsync();
-                transaction.Commit();
-            }
         }
     }
 }

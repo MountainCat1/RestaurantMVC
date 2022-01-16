@@ -26,26 +26,30 @@ namespace RestaurantMVC.Controllers
         }
 
         [HttpPost("create")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromForm] ProductDto productDto)
         {
             await productService.Create(productDto, User);
+            return View("Index");
+        }
+
+        [HttpGet("create")]
+        public IActionResult CreateForm()
+        {
             return View();
         }
 
         [HttpPost("edit")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromForm] ProductDto productDto)
         {
             await productService.Edit(productDto, User);
-            return View();
+            return View("Index");
         }
 
         [HttpPost("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await productService.Delete(id, User);
-            return View();
+            return View("Index");
         }
 
         [HttpGet("get/{id}")]
@@ -59,13 +63,6 @@ namespace RestaurantMVC.Controllers
         {
             List<ProductDto> producDtos = await productService.Get();
             return View(producDtos);
-        }
-
-        [HttpGet("view")]
-        public async Task<IActionResult> ViewUwU([FromRoute] int id)
-        {
-            ProductDto productDto = await productService.Get(id);
-            return View(productDto);
         }
     }
 }

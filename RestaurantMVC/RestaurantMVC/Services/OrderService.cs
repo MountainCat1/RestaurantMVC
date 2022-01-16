@@ -143,12 +143,19 @@ namespace RestaurantMVC.Services
         {
             User user = accountService.GetUser(claims);
 
+            if (user == null)
+                return false;
+
             return user.RoleId == 1 || user.Id == entity.UserId;
         }
 
         public bool AuthorizeAdmin( ClaimsPrincipal claims)
         {
             User user = accountService.GetUser(claims);
+
+
+            if (user == null)
+                return false;
 
             return user.RoleId == 1;
         }
