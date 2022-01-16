@@ -64,5 +64,11 @@ namespace RestaurantMVC.Controllers
             List<ProductDto> producDtos = await productService.Get();
             return View(producDtos);
         }
+        [HttpGet("search/{searchPhrase}")]
+        public async Task<IActionResult> Search(string searchPhrase)
+        {
+            List<ProductDto> producDtos = await productService.Search(searchPhrase);
+            return View(producDtos);
+        }
     }
 }
