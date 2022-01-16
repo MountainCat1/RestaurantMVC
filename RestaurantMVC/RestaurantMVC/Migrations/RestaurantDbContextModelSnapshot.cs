@@ -76,7 +76,12 @@ namespace RestaurantMVC.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("money");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Products");
                 });
@@ -150,6 +155,17 @@ namespace RestaurantMVC.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("RestaurantMVC.Entities.Product", b =>
+                {
+                    b.HasOne("RestaurantMVC.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("RestaurantMVC.Entities.User", b =>

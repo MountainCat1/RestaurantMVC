@@ -20,6 +20,7 @@ namespace RestaurantMVC.Services
     {
         public void RegisterUser(RegistrationDto dto);
         string GenerateJwt(LoginDto dto);
+        public User GetUser(ClaimsPrincipal claimPrincipal);
     }
     public class AccountService : IAccountService
     {
@@ -38,6 +39,17 @@ namespace RestaurantMVC.Services
             this.authenticationSettings = authenticationSettings;
         }
 
+        public User GetUser(ClaimsPrincipal claimPrincipal)
+        {
+            var claim = claimPrincipal.FindFirst(u => u.Type == ClaimTypes.NameIdentifier);
+            if (claim == null)
+                return null;
+
+            var userId = int.Parse(claim.Value);
+
+            var user = context.Users.FirstOrDefault(u => u.Id == userId);
+            return user;
+        }
         public string GenerateJwt(LoginDto dto)
         {
             var user = context.Users.Include(x => x.Role)
@@ -81,6 +93,11 @@ namespace RestaurantMVC.Services
                 Username = dto.Username,
                 Email = dto.Email
             };
+
+            if (!context.Users.Any())
+                newUser.RoleId = 1;
+            else
+                newUser.RoleId = 2;
 
             var hashedPassword = passwordHasher.HashPassword(newUser, dto.Password);
 

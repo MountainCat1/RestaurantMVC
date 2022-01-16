@@ -68,7 +68,7 @@ namespace RestaurantMVC
 
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IValidator<RegistrationDto>, RegistrationDtoValidator>();
         }
