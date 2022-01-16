@@ -13,8 +13,8 @@ namespace RestaurantMVC.Services
 {
     public interface IOrderService
     {
-        public Task<List<OrderDto>> Get();
-        public Task<OrderDto> Get(int id);
+        public Task<List<OrderDto>> Get(ClaimsPrincipal claims);
+        public Task<OrderDto> Get(int id, ClaimsPrincipal claims);
         public Task Delete(int id, ClaimsPrincipal claims);
         public Task Edit(OrderDto dto, ClaimsPrincipal claims);
         public Task Create(OrderDto dto, ClaimsPrincipal claims);
@@ -39,6 +39,8 @@ namespace RestaurantMVC.Services
 
                 User user = accountService.GetUser(claims);
 
+                entity.UserId = user.Id;
+
                 await context.Orders.AddAsync(entity);
 
 
@@ -56,7 +58,7 @@ namespace RestaurantMVC.Services
                 if (entity == null)
                     throw new NotFoundException("");
 
-                if (!Authorize(entity, claims))
+                if (!AuthorizeAdmin(claims))
                 {
                     throw new ForbidException("");
                 }
@@ -77,7 +79,7 @@ namespace RestaurantMVC.Services
                 if (entity == null)
                     throw new NotFoundException("");
 
-                if (!Authorize(entity, claims))
+                if (!AuthorizeAdmin(claims))
                 {
                     throw new ForbidException("");
                 }
@@ -90,18 +92,22 @@ namespace RestaurantMVC.Services
             }
         }
 
-        public async Task<List<OrderDto>> Get()
-        { 
+        public async Task<List<OrderDto>> Get(ClaimsPrincipal claims)
+        {
             List<Order> entity = await context.Orders
                 .Include(x => x.Products)
                 .ToListAsync();
 
-            List<OrderDto> dto = mapper.Map<List<OrderDto>>(entity);
+            List<Order> filteredEntities = entity
+                .Where(x => Authorize(x, claims))
+                .ToList();
+
+            List<OrderDto> dto = mapper.Map<List<OrderDto>>(filteredEntities);
 
             return dto;
         }
 
-        public async Task<OrderDto> Get(int id)
+        public async Task<OrderDto> Get(int id, ClaimsPrincipal claims)
         {
             Order entity = await context.Orders
                 .Include(x => x.Products)
@@ -109,6 +115,11 @@ namespace RestaurantMVC.Services
 
             if (entity == null)
                 throw new NotFoundException("");
+
+            if (!Authorize(entity, claims))
+            {
+                throw new ForbidException("");
+            }
 
             OrderDto dto = mapper.Map<OrderDto>(entity);
 
@@ -120,6 +131,13 @@ namespace RestaurantMVC.Services
             User user = accountService.GetUser(claims);
 
             return user.RoleId == 1 || user.Id == entity.UserId;
+        }
+
+        public bool AuthorizeAdmin( ClaimsPrincipal claims)
+        {
+            User user = accountService.GetUser(claims);
+
+            return user.RoleId == 1;
         }
     }
 }
