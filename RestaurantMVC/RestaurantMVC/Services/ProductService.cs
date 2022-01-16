@@ -17,11 +17,11 @@ namespace RestaurantMVC.Services
 {
     public interface IProductService
     {
-        public Task<List<ProductDto>> ProductGet();
-        public Task<ProductDto> ProductGet(int id);
-        public Task ProductDelete(int id, ClaimsPrincipal claims);
-        public Task ProductEdit(ProductDto dto, ClaimsPrincipal claims);
-        public Task ProductCreate(ProductDto dto, ClaimsPrincipal claims);
+        public Task<List<ProductDto>> Get();
+        public Task<ProductDto> Get(int id);
+        public Task Delete(int id, ClaimsPrincipal claims);
+        public Task Edit(ProductDto dto, ClaimsPrincipal claims);
+        public Task Create(ProductDto dto, ClaimsPrincipal claims);
     }
     public class ProductService : IProductService
     {
@@ -35,7 +35,7 @@ namespace RestaurantMVC.Services
             this.accountService = accountService;
         }
 
-        public async Task ProductDelete(int id, ClaimsPrincipal claims)
+        public async Task Delete(int id, ClaimsPrincipal claims)
         {
             using (var transaction = await context.Database.BeginTransactionAsync())
             {
@@ -56,17 +56,17 @@ namespace RestaurantMVC.Services
             }
         }
 
-        public async Task ProductEdit(ProductDto dto, ClaimsPrincipal claims)
+        public async Task Edit(ProductDto dto, ClaimsPrincipal claims)
         {
             using (var transaction = await context.Database.BeginTransactionAsync())
             {
-                Product product = mapper.Map<Product>(dto);
+                Product entity = mapper.Map<Product>(dto);
 
-                if (!Authorize(product, claims)) {
+                if (!Authorize(entity, claims)) {
                     throw new ForbidException("");
                 }
 
-                context.Products.Update(product);
+                context.Products.Update(entity);
 
 
                 await context.SaveChangesAsync();
@@ -74,22 +74,22 @@ namespace RestaurantMVC.Services
             }
         }
 
-        public async Task<List<ProductDto>> ProductGet()
+        public async Task<List<ProductDto>> Get()
         {
-            List<Product> product = await context.Products.ToListAsync();
+            List<Product> entity = await context.Products.ToListAsync();
 
-            List<ProductDto> productDto = mapper.Map<List<ProductDto>>(product);
+            List<ProductDto> dto = mapper.Map<List<ProductDto>>(entity);
 
-            return productDto;
+            return dto;
         }
 
-        public async Task<ProductDto> ProductGet(int id)
+        public async Task<ProductDto> Get(int id)
         {
-            Product product = await context.Products.FindAsync(id);
+            Product entity = await context.Products.FindAsync(id);
 
-            ProductDto productDto = mapper.Map<ProductDto>(product);
+            ProductDto dto = mapper.Map<ProductDto>(entity);
 
-            return productDto;
+            return dto;
         }
 
         public bool Authorize(Product product, ClaimsPrincipal claims)
@@ -99,15 +99,15 @@ namespace RestaurantMVC.Services
             return user.RoleId == 1;
         }
 
-        public async Task ProductCreate(ProductDto dto, ClaimsPrincipal claims)
+        public async Task Create(ProductDto dto, ClaimsPrincipal claims)
         {
             using (var transaction = await context.Database.BeginTransactionAsync())
             {
-                Product product = mapper.Map<Product>(dto);
+                Product entity = mapper.Map<Product>(dto);
 
                 User user = accountService.GetUser(claims);
 
-                await context.Products.AddAsync(product);
+                await context.Products.AddAsync(entity);
 
 
                 await context.SaveChangesAsync();

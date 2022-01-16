@@ -29,7 +29,7 @@ namespace RestaurantMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromForm] ProductDto productDto)
         {
-            await productService.ProductCreate(productDto, User);
+            await productService.Create(productDto, User);
             return View();
         }
 
@@ -37,34 +37,34 @@ namespace RestaurantMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromForm] ProductDto productDto)
         {
-            await productService.ProductEdit(productDto, User);
+            await productService.Edit(productDto, User);
             return View();
         }
 
         [HttpPost("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await productService.ProductDelete(id, User);
+            await productService.Delete(id, User);
             return View();
         }
 
         [HttpGet("get/{id}")]
         public async Task<IActionResult> Get([FromRoute]int id)
         {
-            ProductDto productDto =  await productService.ProductGet(id);
+            ProductDto productDto =  await productService.Get(id);
             return View(productDto);
         }
         [HttpGet("get")]
         public async Task<IActionResult> Get()
         {
-            List<ProductDto> producDtos = await productService.ProductGet();
+            List<ProductDto> producDtos = await productService.Get();
             return View(producDtos);
         }
 
         [HttpGet("view")]
         public async Task<IActionResult> ViewUwU([FromRoute] int id)
         {
-            ProductDto productDto = await productService.ProductGet(id);
+            ProductDto productDto = await productService.Get(id);
             return View(productDto);
         }
     }

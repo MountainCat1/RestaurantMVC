@@ -11,6 +11,9 @@ namespace RestaurantMVC
         {
             CreateMap<ProductDto, Product>();
             CreateMap<Product, ProductDto>();
+
+            CreateMap<Order, OrderDto>();
+            CreateMap<OrderDto, Order>();
         }
     }
 }
