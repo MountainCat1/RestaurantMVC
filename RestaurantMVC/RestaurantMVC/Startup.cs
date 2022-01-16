@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using RestaurantMVC.Data;
 using RestaurantMVC.Entities;
+using RestaurantMVC.Middleware;
 using RestaurantMVC.Models;
 using RestaurantMVC.Models.Validators;
 using RestaurantMVC.Services;
@@ -54,7 +55,6 @@ namespace RestaurantMVC
                     ValidAudience = authenticationSettings.JwtIssuer,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
                 };
-
             });
 
             services.AddControllersWithViews().AddFluentValidation();
@@ -91,6 +91,8 @@ namespace RestaurantMVC
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseMiddleware<AuthorizationHeaderMiddleware>();
 
             app.UseAuthentication();
 
