@@ -22,6 +22,7 @@ namespace RestaurantMVC.Services
         public Task Delete(int id, ClaimsPrincipal claims);
         public Task Edit(ProductDto dto, ClaimsPrincipal claims);
         public Task Create(ProductDto dto, ClaimsPrincipal claims);
+        public Task<List<ProductDto>> Search(string searchPhrase);
     }
     public class ProductService : IProductService
     {
@@ -121,6 +122,17 @@ namespace RestaurantMVC.Services
                 return false;
 
             return user.RoleId == 1;
+        }
+
+        public async Task<List<ProductDto>> Search(string searchPhrase)
+        {
+            List<Product> entity = await context.Products.ToListAsync();
+
+            List<Product> filteredEntities = entity.Where(x => x.Name.Contains(searchPhrase)).ToList();
+
+            List<ProductDto> dtos = mapper.Map<List<ProductDto>>(entity);
+
+            return dtos;
         }
     }
 }
