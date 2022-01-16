@@ -17,7 +17,7 @@ namespace RestaurantMVC.Services
         public Task<OrderDto> Get(int id, ClaimsPrincipal claims);
         public Task Delete(int id, ClaimsPrincipal claims);
         public Task Edit(OrderDto dto, ClaimsPrincipal claims);
-        public Task Create(OrderDto dto, ClaimsPrincipal claims);
+        public Task Create(OrderDto dto, List<int> productIds, ClaimsPrincipal claims);
     }
     public class OrderService : IOrderService
     {
@@ -31,7 +31,7 @@ namespace RestaurantMVC.Services
             this.accountService = accountService;
         }
 
-        public async Task Create(OrderDto dto, ClaimsPrincipal claims)
+        public async Task Create(OrderDto dto, List<int> productIds, ClaimsPrincipal claims)
         {
             using (var transaction = await context.Database.BeginTransactionAsync())
             {
@@ -40,6 +40,19 @@ namespace RestaurantMVC.Services
                 User user = accountService.GetUser(claims);
 
                 entity.UserId = user.Id;
+
+                foreach (int productId in productIds)
+                {
+                    Product product = await context.Products.FindAsync(productId);
+
+                    OrderProducts orderProducts = new OrderProducts()
+                    {
+                        Order = entity,
+                        Product = product,
+                    };
+
+                    entity.Products.Add(orderProducts);
+                }
 
                 await context.Orders.AddAsync(entity);
 
