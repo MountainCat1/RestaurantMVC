@@ -46,25 +46,16 @@ namespace RestaurantMVC.Controllers
 
         public IActionResult Login([FromForm] LoginDto loginDto)
         {
-            /*LoginDto _loginDto = userService.Login(loginDto, false);
-
-
-            if (_loginDto == null)
-                return BadRequest();
-            else
-            {
-                Response.Cookies.Append("username", _loginDto.Username);
-                Response.Cookies.Append("passwordHash", _loginDto.Password);
-                return Ok();
-            }
-              */
             string key = accountService.GenerateJwt(loginDto);
 
-            Response.Headers.Add("Authorization", key);
-
-            Request.Headers.Add("Authorization", key);
-
             Response.Cookies.Append("Authorization", key);
+
+            return View();
+        }
+
+        public IActionResult Logout()
+        {
+            Response.Cookies.Append("Authorization", "no-token");
 
             return View();
         }
