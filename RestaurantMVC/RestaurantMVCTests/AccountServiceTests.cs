@@ -19,7 +19,7 @@ namespace RestaurantMVCTests
         [Theory]
         [InlineData("")]
         [InlineData("aaavvvaaavvvaaaaavavavavavavavavavavavav")]
-        [InlineData("young_leosia")]
+        [InlineData("Something")]
         public void UsernameValidation_ForInvalidData_ReturnsFalse(string username)
         {
             // Act
@@ -37,53 +37,6 @@ namespace RestaurantMVCTests
         {
             // Act
             bool result = AccountService.IsUsernameValid(username);
-
-            // Assert
-            Assert.True(result);
-        }
-    }
-
-    public class ProductServiceTests
-    {
-        public static IEnumerable<object[]> TestSearchPersonItemsDataOk =>
-        new List<object[]>
-        {
-            new object[] { new ProductDto { Name = "Ogórki", Price = -22 } },
-            new object[] { new ProductDto { Name = "Kie³basa", Price = 0 } },
-            new object[] { new ProductDto { Name = "", Price = -22 } }
-        };
-
-        [Theory]
-        [MemberData(nameof(TestSearchPersonItemsDataOk))]
-        public void ProductValidation_ForInvalidData_ReturnFalse(ProductDto productDto)
-        {
-            // Arrage
-
-
-            // Act
-            bool result = ProductService.IsProductValid(productDto);
-
-            // Assert
-            Assert.False(result);
-        }
-
-
-        public static IEnumerable<object[]> TestSearchPersonItemsDataNotOk =>
-        new List<object[]>
-        {
-            new object[] { new ProductDto { Name = "Ogórki", Price = 1055 } },
-            new object[] { new ProductDto { Name = "Kie³basa", Price = 32 } },
-            new object[] { new ProductDto { Name = "Parówki", Price = 22 } }
-        };
-
-        [Theory]
-        [MemberData(nameof(TestSearchPersonItemsDataNotOk))]
-        public void ProductValidation_ForInvalidData_ReturnTrue(ProductDto productDto)
-        {
-            // Arrage
-
-            // Act
-            bool result = ProductService.IsProductValid(productDto);
 
             // Assert
             Assert.True(result);

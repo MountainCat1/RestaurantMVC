@@ -42,7 +42,7 @@ namespace RestaurantMVC.Services
             {
                 if (!AuthorizeAdmin(claims))
                 {
-                    throw new ForbidException("");
+                    throw new ForbidException("Only admins can create products");
                 }
 
                 Product entity = mapper.Map<Product>(dto);
@@ -62,11 +62,11 @@ namespace RestaurantMVC.Services
                 Product product = await context.Products.FindAsync(id);
 
                 if (product == null)
-                    throw new NotFoundException("");
+                    throw new NotFoundException($"Product with id {id} has not been found");
 
                 if (!AuthorizeAdmin(claims))
                 {
-                    throw new ForbidException("");
+                    throw new ForbidException("Only admins can delete products");
                 }
 
                 context.Products.Remove(product);
@@ -82,8 +82,9 @@ namespace RestaurantMVC.Services
             {
                 Product entity = mapper.Map<Product>(dto);
 
-                if (!AuthorizeAdmin(claims)) {
-                    throw new ForbidException("");
+                if (!AuthorizeAdmin(claims))
+                {
+                    throw new ForbidException("Only admins can edit products");
                 }
 
                 context.Products.Update(entity);
@@ -132,7 +133,6 @@ namespace RestaurantMVC.Services
 
             return user.RoleId == 1;
         }
-
         public static bool IsProductValid(ProductDto productDto)
         {
             if (productDto.Price <= 0)
@@ -141,7 +141,6 @@ namespace RestaurantMVC.Services
                 return false;
             if (productDto.Name == "")
                 return false;
-
             return true;
         }
     }

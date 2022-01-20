@@ -10,7 +10,12 @@
       "ProjectGuid": "130dd0d9-1451-477d-bb0c-eac120e34f19",
       "DisplayName": "RestaurantMVCTests",
       "ColorIndex": 1
+    },
+    "645d4c84-69b9-453a-8829-69454c39d644": {
+      "ProjectGuid": "645d4c84-69b9-453a-8829-69454c39d644",
+      "DisplayName": "RestaurantMVCTests",
+      "ColorIndex": 2
     }
   },
-  "NextColorIndex": 2
+  "NextColorIndex": 3
 }
